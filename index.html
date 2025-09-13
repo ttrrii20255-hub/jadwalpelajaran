@@ -1,8 +1,8 @@
-<!DOCTYPE html>
+      <!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="utf-8" />
-  <title>Jadwal Pelajaran</title>
+  <title>Jadwal Pelajaran & Agenda</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     body { font-family: Arial, sans-serif; margin:0; padding:0; background:#f9f9f9; }
@@ -20,15 +20,15 @@
       font-weight:bold;
       transition:0.2s;
     }
-    .day-btn:hover { opacity:0.85; }
+    .day-btn:hover { transform:scale(1.05); opacity:0.9; }
     .day-btn.active { box-shadow:0 0 8px rgba(0,0,0,0.3); }
 
-    /* Warna tombol per hari */
     .senin { background:#007bff; }
     .selasa { background:#28a745; }
     .rabu { background:#ff9800; }
     .kamis { background:#6f42c1; }
     .jumat { background:#dc3545; }
+    .agenda-btn { background:#17a2b8; }
 
     .grid { display:flex; flex-direction:column; gap:10px; align-items:center; }
     .card { 
@@ -36,17 +36,65 @@
       border:1px solid #ccc; 
       border-radius:8px; 
       width:80%; 
+      max-width:500px;
       background:#fff;
       font-size:16px;
       display:flex;
-      justify-content:space-between;
+      flex-direction:column;
+      gap:8px;
+      animation:fadeIn 0.3s ease-in-out;
+    }
+    .card-header { display:flex; justify-content:space-between; align-items:center; }
+    .jam { font-weight:bold; color:#007bff; }
+    .pr-list { font-size:14px; color:#333; margin-left:10px; }
+    .pr-item { 
+      margin-top:4px; 
+      display:flex; 
+      justify-content:space-between; 
+      align-items:center; 
+      background:#f1f1f1; 
+      padding:4px 8px; 
+      border-radius:6px;
+    }
+    .pr-text { flex:1; }
+    .delete-btn {
+      background:#dc3545; color:#fff; border:none; border-radius:4px;
+      padding:2px 6px; cursor:pointer; font-size:12px;
+    }
+    .delete-btn:hover { opacity:0.8; }
+
+    .add-pr-btn {
+      background:#ffc107; border:none; padding:5px 10px; border-radius:6px; cursor:pointer;
+      font-size:12px; font-weight:bold;
+    }
+    .add-pr-btn:hover { opacity:0.85; }
+
+    @keyframes fadeIn {
+      from { opacity:0; transform:translateY(10px); }
+      to { opacity:1; transform:translateY(0); }
+    }
+
+    /* Agenda style */
+    .agenda-header { display:flex; justify-content:space-between; align-items:center; }
+    .agenda-item { 
+      background:#e9f7ff; 
+      padding:6px 10px; 
+      border-radius:6px; 
+      margin-top:6px; 
+      display:flex; 
+      justify-content:space-between; 
       align-items:center;
     }
-    .jam { font-weight:bold; color:#007bff; }
+    .agenda-text { flex:1; }
+    .add-agenda-btn {
+      background:#17a2b8; color:#fff; border:none; padding:6px 12px; border-radius:6px;
+      cursor:pointer; font-size:14px; font-weight:bold; margin-bottom:10px;
+    }
+    .add-agenda-btn:hover { opacity:0.85; }
   </style>
 </head>
 <body>
-  <header>📅 Jadwal Pelajaran</header>
+  <header>📅 Jadwal Pelajaran & Agenda</header>
 
   <section>
     <div class="days">
@@ -55,6 +103,7 @@
       <button class="day-btn rabu" onclick="showSchedule('Rabu', event)">Rabu</button>
       <button class="day-btn kamis" onclick="showSchedule('Kamis', event)">Kamis</button>
       <button class="day-btn jumat" onclick="showSchedule('Jumat', event)">Jumat</button>
+      <button class="day-btn agenda-btn" onclick="showAgenda(event)">Agenda</button>
     </div>
     <div id="schedule" class="grid"></div>
   </section>
@@ -68,12 +117,25 @@
       "Jumat": ["📖 Bahasa Indonesia", "☪️ Al Islam", "📝 Bahasa Jawa"]
     };
 
+    // ==== PR Section ====
+    function getPR() {
+      return JSON.parse(localStorage.getItem("prData")) || {};
+    }
+    function savePR(data) {
+      localStorage.setItem("prData", JSON.stringify(data));
+    }
+
     function renderSchedule(day) {
       const container = document.getElementById("schedule");
       container.innerHTML = "";
+      const prData = getPR();
+
       schedules[day].forEach((mapel, index) => {
         const div = document.createElement("div");
         div.className = "card";
+
+        const header = document.createElement("div");
+        header.className = "card-header";
 
         const jam = document.createElement("span");
         jam.className = "jam";
@@ -82,20 +144,137 @@
         const namaMapel = document.createElement("span");
         namaMapel.textContent = mapel;
 
-        div.appendChild(jam);
-        div.appendChild(namaMapel);
+        const addBtn = document.createElement("button");
+        addBtn.className = "add-pr-btn";
+        addBtn.textContent = "📌 Tambah PR";
+        addBtn.onclick = () => {
+          const tugas = prompt("Masukkan PR untuk " + mapel + ":");
+          if (tugas) {
+            if (!prData[mapel]) prData[mapel] = [];
+            prData[mapel].push(tugas);
+            savePR(prData);
+            renderSchedule(day);
+          }
+        };
+
+        header.appendChild(jam);
+        header.appendChild(namaMapel);
+        header.appendChild(addBtn);
+        div.appendChild(header);
+
+        if (prData[mapel]) {
+          const prList = document.createElement("div");
+          prList.className = "pr-list";
+          prData[mapel].forEach((tugas, i) => {
+            const item = document.createElement("div");
+            item.className = "pr-item";
+
+            const text = document.createElement("span");
+            text.className = "pr-text";
+            text.textContent = "🔖 " + tugas;
+
+            const delBtn = document.createElement("button");
+            delBtn.className = "delete-btn";
+            delBtn.textContent = "❌";
+            delBtn.onclick = () => {
+              prData[mapel].splice(i, 1);
+              if (prData[mapel].length === 0) delete prData[mapel];
+              savePR(prData);
+              renderSchedule(day);
+            };
+
+            item.appendChild(text);
+            item.appendChild(delBtn);
+            prList.appendChild(item);
+          });
+          div.appendChild(prList);
+        }
+
         container.appendChild(div);
       });
     }
 
+    // ==== Agenda Section ====
+    function getAgenda() {
+      return JSON.parse(localStorage.getItem("agendaData")) || [];
+    }
+    function saveAgenda(data) {
+      localStorage.setItem("agendaData", JSON.stringify(data));
+    }
+
+    function renderAgenda() {
+      const container = document.getElementById("schedule");
+      container.innerHTML = "";
+
+      const addAgendaBtn = document.createElement("button");
+      addAgendaBtn.className = "add-agenda-btn";
+      addAgendaBtn.textContent = "➕ Tambah Agenda";
+      addAgendaBtn.onclick = () => {
+        const tanggal = prompt("Tanggal agenda (misalnya 20/09/2025):");
+        const kegiatan = prompt("Deskripsi kegiatan:");
+        if (tanggal && kegiatan) {
+          const agendaData = getAgenda();
+          agendaData.push({ tanggal, kegiatan });
+          saveAgenda(agendaData);
+          renderAgenda();
+        }
+      };
+      container.appendChild(addAgendaBtn);
+
+      const agendaData = getAgenda();
+      if (agendaData.length === 0) {
+        const kosong = document.createElement("p");
+        kosong.textContent = "Belum ada agenda kegiatan.";
+        container.appendChild(kosong);
+      } else {
+        agendaData.forEach((ag, i) => {
+          const item = document.createElement("div");
+          item.className = "agenda-item";
+
+          const text = document.createElement("span");
+          text.className = "agenda-text";
+          text.textContent = `📅 ${ag.tanggal} - ${ag.kegiatan}`;
+
+          const delBtn = document.createElement("button");
+          delBtn.className = "delete-btn";
+          delBtn.textContent = "❌";
+          delBtn.onclick = () => {
+            agendaData.splice(i, 1);
+            saveAgenda(agendaData);
+            renderAgenda();
+          };
+
+          item.appendChild(text);
+          item.appendChild(delBtn);
+          container.appendChild(item);
+        });
+      }
+    }
+
+    // ==== Control ====
     function showSchedule(day, e) {
       document.querySelectorAll(".day-btn").forEach(btn => btn.classList.remove("active"));
       e.target.classList.add("active");
       renderSchedule(day);
     }
 
-    // Default tampil Senin
-    renderSchedule("Senin");
+    function showAgenda(e) {
+      document.querySelectorAll(".day-btn").forEach(btn => btn.classList.remove("active"));
+      e.target.classList.add("active");
+      renderAgenda();
+    }
+
+    // Default: sesuai hari ini
+    const hariMap = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
+    const today = hariMap[new Date().getDay()];
+    if (schedules[today]) {
+      document.querySelectorAll(".day-btn").forEach(btn => {
+        if (btn.textContent === today) btn.classList.add("active");
+      });
+      renderSchedule(today);
+    } else {
+      renderSchedule("Senin");
+    }
   </script>
 </body>
 </html>
