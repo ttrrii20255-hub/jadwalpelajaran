@@ -5,266 +5,286 @@
   <title>Jadwal Pelajaran</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    body {
-      font-family: "Segoe UI", Arial, sans-serif;
-      background:#f0f4f8;
-      margin:0;
-      color:#333;
+    /* 🎨 Warna utama */
+    :root {
+      --primary:#2563eb;   /* biru elegan */
+      --secondary:#0ea5e9; /* biru muda */
+      --accent:#f59e0b;    /* oranye lembut */
+      --danger:#ef4444;    /* merah */
+      --bg:#f9fafb;        /* abu terang */
+      --card:#ffffff;
+      --text:#1f2937;
+      --border:#e5e7eb;
     }
+    [data-theme="dark"] {
+      --bg:#111827;
+      --card:#1f2937;
+      --text:#f3f4f6;
+      --border:#374151;
+    }
+
+    body {
+      font-family:"Segoe UI", Arial, sans-serif;
+      background:var(--bg); margin:0; color:var(--text);
+      line-height:1.6; transition:0.3s;
+    }
+
+    /* 🔹 Header */
     header {
-      background:linear-gradient(135deg,#007bff,#0056b3);
-      color:#fff; padding:15px; text-align:center;
+      background:var(--primary);
+      color:#fff; padding:16px; text-align:center;
       font-size:20px; font-weight:bold; position:relative;
       box-shadow:0 2px 6px rgba(0,0,0,0.2);
     }
     .back-btn {
-      position:absolute; left:10px; top:50%; transform:translateY(-50%);
-      background:#ffc107; border:none; padding:6px 12px; border-radius:8px; cursor:pointer;
-      font-size:14px; font-weight:bold; color:#000;
-      box-shadow:0 2px 4px rgba(0,0,0,0.2);
-      transition:0.2s;
+      position:absolute; left:12px; top:50%; transform:translateY(-50%);
+      background:var(--accent); border:none; padding:6px 12px;
+      border-radius:8px; cursor:pointer; font-weight:600;
     }
-    .back-btn:hover { background:#e0a800; }
+    .theme-btn {
+      position:absolute; right:12px; top:50%; transform:translateY(-50%);
+      background:none; border:none; font-size:20px; cursor:pointer; color:#fff;
+    }
 
-    section { padding:20px; max-width:700px; margin:auto; }
+    section { padding:20px; max-width:800px; margin:auto; }
 
-    /* Tombol hari */
+    /* 🔹 Tombol hari */
     .day-toggle {
-      width:100%; text-align:left;
-      padding:14px 18px; margin:10px 0;
-      font-size:16px; font-weight:bold;
-      background:#007bff; color:#fff;
-      border:none; border-radius:10px;
-      cursor:pointer; transition:0.2s;
-      box-shadow:0 2px 6px rgba(0,0,0,0.15);
+      width:100%; text-align:left; padding:14px 18px; margin:8px 0;
+      font-size:16px; font-weight:600;
+      background:var(--primary); color:#fff;
+      border:none; border-radius:10px; cursor:pointer;
+      transition:0.2s; box-shadow:0 2px 5px rgba(0,0,0,0.1);
     }
-    .day-toggle:hover { background:#0069d9; }
-    .day-toggle.active { background:#0056b3; }
+    .day-toggle:hover { background:#1e40af; }
 
-    /* Container jadwal */
+    /* 🔹 Container jadwal */
     .grid {
-      display:none; flex-direction:column;
-      gap:12px; margin:12px 0 25px 0;
-      padding:15px;
-      background:#fff; border-radius:12px;
-      box-shadow:0 2px 6px rgba(0,0,0,0.1);
-      border:1px solid #e0e0e0;
+      display:none; flex-direction:column; gap:12px; margin:12px 0 25px 0;
+      padding:16px; background:var(--card); border-radius:12px;
+      border:1px solid var(--border); box-shadow:0 1px 4px rgba(0,0,0,0.08);
     }
     .grid.show { display:flex; }
 
-    /* Kartu mapel */
+    /* 🔹 Kartu mapel */
     .card {
-      padding:14px 16px;
-      border-radius:10px;
-      background:#f9fbff;
-      border:1px solid #d6e4ff;
+      padding:14px 16px; border-radius:10px;
+      background:var(--bg); border:1px solid var(--border);
       font-size:15px;
-      display:flex; flex-direction:column;
-      gap:6px;
-      box-shadow:0 1px 4px rgba(0,0,0,0.08);
     }
-    .jam { font-weight:bold; color:#0056b3; }
+    .jam { font-weight:bold; color:var(--primary); }
 
-    /* PR */
+    /* 🔹 PR */
     .add-pr-btn {
-      background:#ffc107; border:none;
-      padding:4px 10px; border-radius:6px;
-      cursor:pointer; font-size:12px; font-weight:bold;
-      margin-left:10px; transition:0.2s;
+      background:var(--accent); border:none; padding:4px 10px;
+      border-radius:6px; cursor:pointer; font-size:12px; font-weight:600;
+      margin-left:10px; color:#fff;
     }
-    .add-pr-btn:hover { background:#e0a800; }
-    .pr-list { margin-top:6px; }
     .pr-item {
-      background:#fff8e1; padding:6px 10px;
-      border-radius:8px; margin-top:6px;
-      display:flex; justify-content:space-between; align-items:center;
-      border:1px solid #ffe082;
+      background:var(--card); padding:8px 12px; border-radius:8px;
+      margin-top:6px; display:flex; justify-content:space-between; align-items:center;
+      border:1px solid var(--border);
     }
-    .delete-btn {
-      background:#dc3545; color:#fff;
-      border:none; padding:2px 6px;
-      border-radius:5px; cursor:pointer;
-      font-size:12px; transition:0.2s;
-    }
-    .delete-btn:hover { background:#b52a37; }
+    .done { text-decoration:line-through; opacity:0.6; }
 
-    /* Agenda Umum */
+    /* 🔹 Agenda */
     .agenda-section {
       margin-top:30px; padding:20px;
-      background:#e6faff; border-radius:12px;
-      box-shadow:0 2px 6px rgba(0,0,0,0.1);
-      border:1px solid #b3ecff;
+      background:var(--card); border-radius:12px;
+      border:1px solid var(--border); box-shadow:0 1px 4px rgba(0,0,0,0.08);
     }
-    .agenda-section h2 {
-      margin-top:0; color:#007bff;
-      text-align:center;
-    }
-    .add-agenda-btn {
-      background:#17a2b8; color:#fff;
-      border:none; padding:8px 14px;
-      border-radius:8px; cursor:pointer;
-      font-size:14px; font-weight:bold;
-      display:block; margin:0 auto 12px auto;
-      transition:0.2s; box-shadow:0 2px 4px rgba(0,0,0,0.15);
-    }
-    .add-agenda-btn:hover { background:#138496; }
     .agenda-item {
-      background:#fff; padding:8px 12px;
-      border-radius:8px; margin-top:8px;
-      display:flex; justify-content:space-between; align-items:center;
-      border:1px solid #d9f0ff;
-      box-shadow:0 1px 3px rgba(0,0,0,0.05);
+      background:var(--bg); padding:8px 12px; border-radius:8px;
+      margin-top:8px; display:flex; justify-content:space-between; align-items:center;
+      border:1px solid var(--border);
     }
 
-    @keyframes fadeIn {
-      from {opacity:0; transform:translateY(10px);}
-      to {opacity:1; transform:translateY(0);}
+    /* 🔹 Kalender mini */
+    .calendar {
+      display:grid; grid-template-columns:repeat(7,1fr); gap:4px; margin-top:12px; text-align:center;
+    }
+    .calendar div { padding:8px; border-radius:6px; font-size:14px; }
+    .calendar .header { font-weight:bold; background:var(--secondary); color:#fff; }
+    .calendar .today { background:var(--primary); color:#fff; font-weight:bold; }
+    .calendar .marked { background:var(--accent); color:#fff; }
+
+    /* 🔹 Catatan */
+    .note-section {
+      margin-top:30px; padding:20px;
+      background:var(--card); border-radius:12px;
+      border:1px solid var(--border); box-shadow:0 1px 4px rgba(0,0,0,0.08);
+    }
+    .note-text {
+      width:100%; min-height:120px; border-radius:8px;
+      padding:12px; border:1px solid var(--border);
+      font-size:14px;
+    }
+    .note-section button {
+      margin-top:10px; padding:8px 14px; border:none;
+      background:var(--primary); color:#fff; border-radius:8px; cursor:pointer; font-weight:600;
+    }
+
+    /* 🔹 Bottom nav */
+    .bottom-nav {
+      position:fixed; bottom:0; left:0; right:0;
+      background:var(--card); display:flex; justify-content:space-around; padding:10px 0;
+      border-top:1px solid var(--border); box-shadow:0 -1px 5px rgba(0,0,0,0.1);
+    }
+    .bottom-nav button {
+      background:none; border:none; font-size:16px; cursor:pointer; font-weight:600;
+      color:var(--primary);
     }
   </style>
 </head>
 <body>
   <header>
-    <button class="back-btn" onclick="window.location.href='index.html'">🏠 Kembali</button>
+    <button class="back-btn" onclick="window.location.href='index.html'">🏠</button>
     📅 Jadwal Pelajaran
+    <button class="theme-btn" onclick="toggleTheme()">🌙</button>
   </header>
 
+  <!-- Jadwal -->
   <section id="jadwal-container"></section>
 
-  <!-- Agenda umum -->
+  <!-- Agenda -->
   <section class="agenda-section">
     <h2>🗓️ Agenda</h2>
-    <button class="add-agenda-btn" onclick="tambahAgenda()">➕ Tambah Agenda</button>
+    <button onclick="tambahAgenda()">➕ Tambah Agenda</button>
     <div id="agenda-list"></div>
+    <div id="calendar"></div>
   </section>
 
+  <!-- Catatan -->
+  <section class="note-section">
+    <h2>📝 Catatan</h2>
+    <textarea class="note-text" id="notes" placeholder="Tulis catatan di sini..."></textarea>
+    <button onclick="simpanCatatan()">💾 Simpan Catatan</button>
+  </section>
+
+  <!-- Bottom Navigation -->
+  <div class="bottom-nav">
+    <button onclick="scrollToEl('jadwal-container')">📅 Jadwal</button>
+    <button onclick="scrollToEl('agenda-list')">🗓️ Agenda</button>
+    <button onclick="scrollToEl('notes')">📝 Catatan</button>
+  </div>
+
   <script>
+    /* === DATA === */
     const schedules = {
-      "Senin": ["📘 Matematika", "🎨 Seni Budaya", "🌍 Bahasa Inggris", "🕌 Bahasa Arab", "💻 Informatika"],
-      "Selasa": ["⚽ PJOK", "🏛️ PPKN", "🌍 Bahasa Inggris", "🌙 Ke Muhammadiyahan", "📖 Bahasa Indonesia", "🧑‍🏫 BK"],
-      "Rabu": ["🎓 D2PK"],
-      "Kamis": ["🔬 IPAS", "📜 Sejarah", "📘 Matematika"],
-      "Jumat": ["📖 Bahasa Indonesia", "☪️ Al Islam", "📝 Bahasa Jawa"]
+      "Senin":["📘 Matematika","🎨 Seni Budaya","🌍 Bahasa Inggris","🕌 Bahasa Arab","💻 Informatika"],
+      "Selasa":["⚽ PJOK","🏛️ PPKN","🌍 Bahasa Inggris","🌙 Ke Muhammadiyahan","📖 Bahasa Indonesia","🧑‍🏫 BK"],
+      "Rabu":["🎓 D2PK"],
+      "Kamis":["🔬 IPAS","📜 Sejarah","📘 Matematika"],
+      "Jumat":["📖 Bahasa Indonesia","☪️ Al Islam","📝 Bahasa Jawa"]
     };
+    function getData(k,def){return JSON.parse(localStorage.getItem(k))||def;}
+    function saveData(k,d){localStorage.setItem(k,JSON.stringify(d));}
 
-    // === PR ===
-    function getPR() { return JSON.parse(localStorage.getItem("prData")) || {}; }
-    function savePR(data) { localStorage.setItem("prData", JSON.stringify(data)); }
-
-    // === Agenda Umum ===
-    function getAgenda() { return JSON.parse(localStorage.getItem("agendaData")) || []; }
-    function saveAgenda(data) { localStorage.setItem("agendaData", JSON.stringify(data)); }
-
-    function renderSchedules() {
-      const container = document.getElementById("jadwal-container");
-      container.innerHTML = "";
-
-      const prData = getPR();
-
-      for (const hari in schedules) {
-        // Tombol hari
-        const btn = document.createElement("button");
-        btn.className = "day-toggle";
-        btn.textContent = hari;
-        btn.onclick = () => {
-          btn.classList.toggle("active");
-          grid.classList.toggle("show");
-        };
-        container.appendChild(btn);
-
-        // Kontainer isi mapel
-        const grid = document.createElement("div");
-        grid.className = "grid";
-
-        schedules[hari].forEach((mapel, i) => {
-          const div = document.createElement("div");
-          div.className = "card";
-
-          const header = document.createElement("div");
-          header.innerHTML = `<span class="jam">Jam ${i+1}</span> - ${mapel}`;
-
-          const addBtn = document.createElement("button");
-          addBtn.className = "add-pr-btn";
-          addBtn.textContent = "➕ PR";
-          addBtn.onclick = () => {
-            const tugas = prompt("Masukkan PR untuk " + mapel + ":");
-            if (tugas) {
-              if (!prData[mapel]) prData[mapel] = [];
-              prData[mapel].push(tugas);
-              savePR(prData);
-              renderSchedules();
+    /* === Jadwal + PR === */
+    function renderSchedules(){
+      const container=document.getElementById("jadwal-container"); container.innerHTML="";
+      const prData=getData("prData",{});
+      for(const hari in schedules){
+        const btn=document.createElement("button"); btn.className="day-toggle"; btn.textContent=hari;
+        const grid=document.createElement("div"); grid.className="grid";
+        btn.onclick=()=>grid.classList.toggle("show"); container.append(btn,grid);
+        schedules[hari].forEach((mapel,i)=>{
+          const div=document.createElement("div"); div.className="card";
+          div.innerHTML=`<span class="jam">Jam ${i+1}</span> - ${mapel}`;
+          const add=document.createElement("button"); add.className="add-pr-btn"; add.textContent="➕ PR";
+          add.onclick=()=>{
+            const tugas=prompt("Masukkan PR untuk "+mapel+":");
+            if(tugas){ if(!prData[mapel]) prData[mapel]=[];
+              prData[mapel].push({text:tugas,done:false});
+              saveData("prData",prData); renderSchedules();
             }
           };
-          header.appendChild(addBtn);
-          div.appendChild(header);
-
-          if (prData[mapel]) {
-            const prList = document.createElement("div");
-            prList.className = "pr-list";
-            prData[mapel].forEach((tugas, idx) => {
-              const item = document.createElement("div");
-              item.className = "pr-item";
-              item.innerHTML = `<span>🔖 ${tugas}</span>`;
-              const delBtn = document.createElement("button");
-              delBtn.className = "delete-btn";
-              delBtn.textContent = "❌";
-              delBtn.onclick = () => {
-                prData[mapel].splice(idx, 1);
-                if (prData[mapel].length === 0) delete prData[mapel];
-                savePR(prData);
-                renderSchedules();
-              };
-              item.appendChild(delBtn);
-              prList.appendChild(item);
+          div.appendChild(add);
+          if(prData[mapel]){
+            prData[mapel].forEach((pr,idx)=>{
+              const item=document.createElement("div"); item.className="pr-item";
+              const span=document.createElement("span"); span.textContent="🔖 "+pr.text;
+              if(pr.done) span.classList.add("done");
+              const done=document.createElement("button"); done.textContent="✅";
+              done.onclick=()=>{pr.done=!pr.done; saveData("prData",prData); renderSchedules();};
+              const del=document.createElement("button"); del.textContent="❌";
+              del.onclick=()=>{prData[mapel].splice(idx,1); saveData("prData",prData); renderSchedules();};
+              item.append(span,done,del); div.appendChild(item);
             });
-            div.appendChild(prList);
           }
-
           grid.appendChild(div);
         });
-
-        container.appendChild(grid);
       }
     }
 
-    function renderAgenda() {
-      const agendaList = document.getElementById("agenda-list");
-      agendaList.innerHTML = "";
-      const agendaData = getAgenda();
-
-      if (agendaData.length === 0) {
-        agendaList.innerHTML = "<p style='text-align:center;color:#666;'>Belum ada agenda.</p>";
-        return;
-      }
-
-      agendaData.forEach((ag, idx) => {
-        const item = document.createElement("div");
-        item.className = "agenda-item";
-        item.innerHTML = `<span>📌 ${ag}</span>`;
-        const delBtn = document.createElement("button");
-        delBtn.className = "delete-btn";
-        delBtn.textContent = "❌";
-        delBtn.onclick = () => {
-          agendaData.splice(idx, 1);
-          saveAgenda(agendaData);
-          renderAgenda();
-        };
-        item.appendChild(delBtn);
-        agendaList.appendChild(item);
+    /* === Agenda === */
+    function renderAgenda(){
+      const list=document.getElementById("agenda-list"); list.innerHTML="";
+      const agenda=getData("agendaData",[]);
+      if(agenda.length===0){ list.innerHTML="<p>Belum ada agenda.</p>"; }
+      agenda.forEach((ag,idx)=>{
+        const item=document.createElement("div"); item.className="agenda-item";
+        const span=document.createElement("span");
+        span.textContent=`📌 ${ag.text} (${ag.date}) [${ag.cat}]`; if(ag.done) span.classList.add("done");
+        const done=document.createElement("button"); done.textContent="✅";
+        done.onclick=()=>{ag.done=!ag.done; saveData("agendaData",agenda); renderAgenda(); renderCalendar();};
+        const del=document.createElement("button"); del.textContent="❌";
+        del.onclick=()=>{agenda.splice(idx,1); saveData("agendaData",agenda); renderAgenda(); renderCalendar();};
+        item.append(span,done,del); list.appendChild(item);
       });
+      renderCalendar();
     }
-
-    function tambahAgenda() {
-      const kegiatan = prompt("Masukkan agenda baru:");
-      if (kegiatan) {
-        const data = getAgenda();
-        data.push(kegiatan);
-        saveAgenda(data);
-        renderAgenda();
+    function tambahAgenda(){
+      const kegiatan=prompt("Masukkan agenda:");
+      const tanggal=prompt("Tanggal (format: 20/09/2025):");
+      const kategori=prompt("Kategori (📚 Sekolah/ 🏀 Ekstra/ 🏠 Rumah):","📚 Sekolah");
+      if(kegiatan){
+        const data=getData("agendaData",[]);
+        data.push({text:kegiatan,date:tanggal||"-",cat:kategori||"-",done:false});
+        saveData("agendaData",data); renderAgenda();
       }
     }
 
-    renderSchedules();
-    renderAgenda();
+    /* === Kalender === */
+    function renderCalendar(){
+      const cal=document.getElementById("calendar"); cal.innerHTML="";
+      const today=new Date(); const year=today.getFullYear(); const month=today.getMonth();
+      const first=new Date(year,month,1); const last=new Date(year,month+1,0);
+      const days=["Min","Sen","Sel","Rab","Kam","Jum","Sab"];
+      const agenda=getData("agendaData",[]);
+      days.forEach(d=>{const h=document.createElement("div");h.className="header";h.textContent=d;cal.appendChild(h);});
+      for(let i=0;i<first.getDay();i++){cal.appendChild(document.createElement("div"));}
+      for(let d=1;d<=last.getDate();d++){
+        const cell=document.createElement("div"); cell.textContent=d;
+        if(d===today.getDate()) cell.classList.add("today");
+        const tgl=`${d}/${month+1}/${year}`;
+        if(agenda.some(a=>a.date===tgl)) cell.classList.add("marked");
+        cal.appendChild(cell);
+      }
+      cal.className="calendar";
+    }
+
+    /* === Catatan === */
+    function simpanCatatan(){const txt=document.getElementById("notes").value; saveData("notes",txt); alert("Catatan tersimpan!");}
+    function loadCatatan(){document.getElementById("notes").value=getData("notes","");}
+
+    /* === Privasi (PIN) === */
+    function cekPIN(){
+      const saved=getData("pin",null);
+      if(!saved){
+        const pin=prompt("Buat PIN baru (4 digit):"); if(pin) saveData("pin",pin);
+      } else {
+        let coba=prompt("Masukkan PIN:"); if(coba!==saved){document.body.innerHTML="<h2>Akses ditolak ❌</h2>";}
+      }
+    }
+
+    /* === Util === */
+    function scrollToEl(id){document.getElementById(id).scrollIntoView({behavior:"smooth"});}
+    function toggleTheme(){document.body.dataset.theme=document.body.dataset.theme==="dark"?"light":"dark";}
+
+    // Init
+    cekPIN(); renderSchedules(); renderAgenda(); loadCatatan();
   </script>
 </body>
 </html>
+    
