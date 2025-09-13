@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <title>Website Edukasi - Aman</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body { font-family: Arial, sans-serif; margin:0; padding:0; }
+    header, nav, footer { background:#f0f0f0; padding:10px; }
+    nav ul { list-style:none; display:flex; gap:20px; padding:0; }
+    nav ul li { cursor:pointer; }
+    nav ul li.active { font-weight:bold; }
+    section { padding:20px; border-bottom:1px solid #ddd; }
+    .grid { display:flex; gap:20px; }
+    .card { padding:20px; border:1px solid #ccc; border-radius:8px; flex:1; }
+    .carousel { display:flex; gap:10px; overflow-x:auto; }
+    .carousel .card { min-width:200px; }
+    footer { text-align:center; }
+    #loginPage, #mainPage { display:none; }
+  </style>
+</head>
+<body>
+  <!-- Login page -->
+  <div id="loginPage">
+    <section>
+      <h1>Login ke Website Edukasi</h1>
+      <input id="username" type="text" placeholder="Username" autocomplete="username"><br><br>
+      <input id="password" type="password" placeholder="Password" autocomplete="current-password"><br><br>
+      <button id="btnLogin">Login</button>
+      <button id="btnShowRegister">Daftar</button>
+      <div id="loginMsg" role="status" aria-live="polite"></div>
+    </section>
+
+    <!-- register form (simple) -->
+    <section id="registerSection" style="display:none;">
+      <h2>Daftar pengguna baru</h2>
+      <input id="regUsername" placeholder="Username"><br><br>
+      <input id="regPassword" type="password" placeholder="Password"><br><br>
+      <input id="regDisplayName" placeholder="Nama tampil"><br><br>
+      <button id="btnRegister">Daftar</button>
+      <button id="btnCancelRegister">Batal</button>
+      <div id="regMsg" role="status" aria-live="polite"></div>
+    </section>
+  </div>
+
+  <!-- Main page -->
+  <div id="mainPage">
+    <header>
+      <span><strong>LOGO</strong></span>
+      <input id="search" type="text" placeholder="Cari materi, kursus...">
+      <span id="notif">🔔 <span id="notifCount">0</span></span>
+      <span id="profile">👤</span>
+      <button id="btnLogout">Logout</button>
+    </header>
+
+    <nav>
+      <ul>
+        <li class="active">Beranda</li>
+        <li>Kursus</li>
+        <li>Latihan</li>
+        <li>Forum</li>
+        <li>Lainnya</li>
+      </ul>
+    </nav>
+
+    <section>
+      <h1 id="heroTitle">Belajar Mudah, Dimana Saja</h1>
+      <p id="heroSub">Akses ribuan kursus dan latihan soal gratis</p>
+      <button onclick="alert('Mulai Belajar!')">Mulai Belajar</button>
+      <button onclick="alert('Lihat Kursus!')">Lihat Kursus</button>
+    </section>
+
+    <section>
+      <h2>Kursus Unggulan</h2>
+      <div class="grid">
+        <div class="card">Matematika Dasar</div>
+        <div class="card">Bahasa Inggris</div>
+        <div class="card">Ilmu Pengetahuan Alam</div>
+      </div>
+      <a href="#">Lihat Semua Kursus</a>
+    </section>
+
+    <section>
+      <h2>Progres Belajar</h2>
+      <progress id="progress" value="65" max="100"></progress>
+      <p id="lastCourse">Matematika Dasar - Bab 3</p>
+      <button onclick="lanjutBelajar()">Lanjutkan Belajar</button>
+    </section>
+
+    <section>
+      <h2>Tes Kemampuan</h2>
+      <ul>
+        <li>Kuis Matematika <button onclick="kerjakan('Matematika')">Kerjakan</button></li>
+        <li>Kuis Bahasa Inggris <button onclick="kerjakan('Bahasa Inggris')">Kerjakan</button></li>
+      </ul>
+      <a href="#">Lihat Semua Kuis</a>
+    </section>
+
+    <section>
+      <h2>Forum Diskusi</h2>
+      <ul id="forumList">
+        <li>Cara memahami aljabar</li>
+        <li>Tips belajar grammar</li>
+        <li>Diskusi persiapan ujian</li>
+      </ul>
+      <button onclick="buatTopik()">Buat Topik Baru</button>
+    </section>
+
+    <section>
+      <div>
+        <h3 id="level">🏆 Level 1</h3>
+        <progress id="levelProg" value="0" max="100"></progress>
+      </div>
+      <div>
+        <h3>⭐ EduPoin: <span id="poin">0</span></h3>
+        <button id="btnRedeem">Tukar Hadiah (100 poin)</button>
+      </div>
+    </section>
+
+    <section>
+      <h2>Promo & Informasi</h2>
+      <div class="carousel">
+        <div class="card">Kursus Premium Diskon 50%</div>
+        <div class="card">Webinar Sains Gratis</div>
+        <div class="card">Artikel Belajar Efektif</div>
+      </div>
+    </section>
+
+    <footer>
+      <a href="#">Tentang Kami</a> |
+      <a href="#">Kontak</a> |
+      <a href="#">Kebijakan Privasi</a> |
+      <a href="#">Bantuan</a>
+    </footer>
+  </div>
+
+  <script>
+    // Menggunakan only textContent untuk mencegah XSS
+    const loginPage = document.getElementById('loginPage');
+    const mainPage = document.getElementById('mainPage');
+    const profileEl = document.getElementById('profile');
+    const poinEl = document.getElementById('poin');
+    const levelEl = document.getElementById('level');
+    const levelProg = document.getElementById('levelProg');
+
+    // Setup event listeners
+    document.getElementById('btnLogin').addEventListener('click', login);
+    document.getElementById('btnLogout').addEventListener('click', logout);
+    document.getElementById('btnShowRegister').addEventListener('click', () => {
+      document.getElementById('registerSection').style.display = 'block';
+    });
+    document.getElementById('btnCancelRegister').addEventListener('click', () => {
+      document.getElementById('registerSection').style.display = 'none';
+    });
+    document.getElementById('btnRegister').addEventListener('click', register);
+    document.getElementById('btnRedeem').addEventListener('click', redeem);
+
+    // On load, check session
+    window.addEventListener('load', async () => {
+      try {
+        const res = await fetch('/api/me', { credentials: 'include' });
+        if (res.ok) {
+          const data = await res.json();
+          await showMain(data);
+        } else {
+          showLogin();
+        }
+      } catch (e) {
+        console.error(e);
+        showLogin();
+      }
+    });
+
+    function showLogin() {
+      loginPage.style.display = 'block';
+      mainPage.style.display = 'none';
+    }
+
+    async function showMain(data) {
+      loginPage.style.display = 'none';
+      mainPage.style.display = 'block';
+      profileEl.textContent = '👤 ' + (data.displayName || data.username || 'User');
+      poinEl.textContent = String(data.points || 0);
+      levelEl.textContent = '🏆 Level ' + String(data.level || 1);
+      levelProg.value = Math.min((data.level || 1 - 1) * 25, 100);
+    }
+
+    async function login() {
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+
+      if (!username || !password) {
+        document.getElementById('loginMsg').textContent = 'Isi username dan password';
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ username, password })
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          // fetch me to get full profile
+          const me = await (await fetch('/api/me', { credentials: 'include' })).json();
+          await showMain(me);
+        } else {
+          document.getElementById('loginMsg').textContent = data.error || 'Login gagal';
+        }
+      } catch (err) {
+        console.error(err);
+        document.getElementById('loginMsg').textContent = 'Terjadi kesalahan koneksi';
+      }
+    }
+
+    async function register() {
+      const username = document.getElementById('regUsername').value.trim();
+      const password = document.getElementById('regPassword').value;
+      const displayName = document.getElementById('regDisplayName').value.trim();
+
+      if (!username || !password) {
+        document.getElementById('regMsg').textContent = 'Isi username & password';
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password, displayName })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          document.getElementById('regMsg').textContent = 'Berhasil daftar. Silakan login.';
+          document.getElementById('registerSection').style.display = 'none';
+        } else {
+          document.getElementById('regMsg').textContent = data.error || 'Daftar gagal';
+        }
+      } catch (err) {
+        console.error(err);
+        document.getElementById('regMsg').textContent = 'Kesalahan koneksi';
+      }
+    }
+
+    async function logout() {
+      await fetch('/api/logout', { method: 'POST', credentials: 'include' });
+      showLogin();
+    }
+
+    function lanjutBelajar() {
+      alert('Lanjutkan belajar dari progres terakhir!');
+    }
+
+    function kerjakan(mataPelajaran) {
+      alert('Mulai mengerjakan kuis ' + mataPelajaran);
+    }
+
+    function buatTopik() {
+      alert('Fitur membuat topik baru di forum');
+    }
+
+    async function redeem() {
+      try {
+        const cost = 100;
+        const res = await fetch('/api/redeem', {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ cost })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          // update UI poin
+          poinEl.textContent = String(data.points);
+          alert('Tukar berhasil!');
+        } else {
+          alert(data.error || 'Tukar gagal');
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Kesalahan koneksi');
+      }
+    }
+  </script>
+</body>
+                                                                                            </html>
