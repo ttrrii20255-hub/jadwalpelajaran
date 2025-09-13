@@ -1,16 +1,16 @@
-      <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="utf-8" />
-  <title>Jadwal Pelajaran </title>
+  <title>Jadwal Pelajaran</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     body { font-family: Arial, sans-serif; margin:0; padding:0; background:#f9f9f9; }
     header { background:#007bff; color:#fff; padding:15px; text-align:center; font-size:20px; font-weight:bold; }
     section { padding:20px; }
 
+    /* Tombol navigasi */
     .days { display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap; justify-content:center; }
-
     .day-btn {
       padding:10px 18px;
       border:none;
@@ -23,13 +23,21 @@
     .day-btn:hover { transform:scale(1.05); opacity:0.9; }
     .day-btn.active { box-shadow:0 0 8px rgba(0,0,0,0.3); }
 
+    /* Warna tombol */
     .senin { background:#007bff; }
     .selasa { background:#28a745; }
     .rabu { background:#ff9800; }
     .kamis { background:#6f42c1; }
     .jumat { background:#dc3545; }
-    .agenda-btn { background:#17a2b8; }
 
+    /* Tombol agenda */
+    .agenda-container { text-align:center; margin-bottom:20px; }
+    .agenda-btn { background:#17a2b8; color:#fff; border:none; padding:10px 20px; border-radius:8px;
+      font-size:16px; font-weight:bold; cursor:pointer; transition:0.2s; }
+    .agenda-btn:hover { transform:scale(1.05); opacity:0.9; }
+    .agenda-btn.active { box-shadow:0 0 8px rgba(0,0,0,0.3); }
+
+    /* Layout kartu */
     .grid { display:flex; flex-direction:column; gap:10px; align-items:center; }
     .card { 
       padding:12px 20px; 
@@ -46,15 +54,12 @@
     }
     .card-header { display:flex; justify-content:space-between; align-items:center; }
     .jam { font-weight:bold; color:#007bff; }
+
+    /* PR */
     .pr-list { font-size:14px; color:#333; margin-left:10px; }
     .pr-item { 
-      margin-top:4px; 
-      display:flex; 
-      justify-content:space-between; 
-      align-items:center; 
-      background:#f1f1f1; 
-      padding:4px 8px; 
-      border-radius:6px;
+      margin-top:4px; display:flex; justify-content:space-between; align-items:center; 
+      background:#f1f1f1; padding:4px 8px; border-radius:6px;
     }
     .pr-text { flex:1; }
     .delete-btn {
@@ -62,28 +67,22 @@
       padding:2px 6px; cursor:pointer; font-size:12px;
     }
     .delete-btn:hover { opacity:0.8; }
-
     .add-pr-btn {
       background:#ffc107; border:none; padding:5px 10px; border-radius:6px; cursor:pointer;
       font-size:12px; font-weight:bold;
     }
     .add-pr-btn:hover { opacity:0.85; }
 
+    /* Animasi */
     @keyframes fadeIn {
       from { opacity:0; transform:translateY(10px); }
       to { opacity:1; transform:translateY(0); }
     }
 
     /* Agenda style */
-    .agenda-header { display:flex; justify-content:space-between; align-items:center; }
     .agenda-item { 
-      background:#e9f7ff; 
-      padding:6px 10px; 
-      border-radius:6px; 
-      margin-top:6px; 
-      display:flex; 
-      justify-content:space-between; 
-      align-items:center;
+      background:#e9f7ff; padding:6px 10px; border-radius:6px; margin-top:6px; 
+      display:flex; justify-content:space-between; align-items:center;
     }
     .agenda-text { flex:1; }
     .add-agenda-btn {
@@ -94,16 +93,20 @@
   </style>
 </head>
 <body>
-  <header>📅 Jadwal Pelajaran & Agenda</header>
+  <header>📅 Jadwal Pelajaran</header>
+
+  <!-- Tombol Agenda terpisah -->
+  <div class="agenda-container">
+    <button class="agenda-btn" onclick="showAgenda(event)">📌 Lihat Agenda</button>
+  </div>
 
   <section>
     <div class="days">
-      <button class="day-btn senin active" onclick="showSchedule('Senin', event)">Senin</button>
+      <button class="day-btn senin" onclick="showSchedule('Senin', event)">Senin</button>
       <button class="day-btn selasa" onclick="showSchedule('Selasa', event)">Selasa</button>
       <button class="day-btn rabu" onclick="showSchedule('Rabu', event)">Rabu</button>
       <button class="day-btn kamis" onclick="showSchedule('Kamis', event)">Kamis</button>
       <button class="day-btn jumat" onclick="showSchedule('Jumat', event)">Jumat</button>
-      <button class="day-btn agenda-btn" onclick="showAgenda(event)">Agenda</button>
     </div>
     <div id="schedule" class="grid"></div>
   </section>
@@ -117,7 +120,7 @@
       "Jumat": ["📖 Bahasa Indonesia", "☪️ Al Islam", "📝 Bahasa Jawa"]
     };
 
-    // ==== PR Section ====
+    // ==== PR ====
     function getPR() {
       return JSON.parse(localStorage.getItem("prData")) || {};
     }
@@ -194,7 +197,7 @@
       });
     }
 
-    // ==== Agenda Section ====
+    // ==== Agenda ====
     function getAgenda() {
       return JSON.parse(localStorage.getItem("agendaData")) || [];
     }
@@ -253,28 +256,20 @@
 
     // ==== Control ====
     function showSchedule(day, e) {
-      document.querySelectorAll(".day-btn").forEach(btn => btn.classList.remove("active"));
+      document.querySelectorAll(".day-btn, .agenda-btn").forEach(btn => btn.classList.remove("active"));
       e.target.classList.add("active");
       renderSchedule(day);
     }
 
     function showAgenda(e) {
-      document.querySelectorAll(".day-btn").forEach(btn => btn.classList.remove("active"));
+      document.querySelectorAll(".day-btn, .agenda-btn").forEach(btn => btn.classList.remove("active"));
       e.target.classList.add("active");
       renderAgenda();
     }
 
-    // Default: sesuai hari ini
-    const hariMap = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
-    const today = hariMap[new Date().getDay()];
-    if (schedules[today]) {
-      document.querySelectorAll(".day-btn").forEach(btn => {
-        if (btn.textContent === today) btn.classList.add("active");
-      });
-      renderSchedule(today);
-    } else {
-      renderSchedule("Senin");
-    }
+    // Default: kosong (tidak auto tampil jadwal)
+    document.getElementById("schedule").innerHTML = "<p style='text-align:center;color:#666;'>Silakan pilih hari atau lihat agenda.</p>";
   </script>
 </body>
 </html>
+
