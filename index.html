@@ -2,141 +2,100 @@
 <html lang="id">
 <head>
   <meta charset="utf-8" />
-  <title>Website Edukasi - Tanpa Login</title>
+  <title>Jadwal Pelajaran</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    body { font-family: Arial, sans-serif; margin:0; padding:0; }
-    header, nav, footer { background:#f0f0f0; padding:10px; }
-    nav ul { list-style:none; display:flex; gap:20px; padding:0; }
-    nav ul li { cursor:pointer; }
-    nav ul li.active { font-weight:bold; }
-    section { padding:20px; border-bottom:1px solid #ddd; }
-    .grid { display:flex; gap:20px; }
-    .card { padding:20px; border:1px solid #ccc; border-radius:8px; flex:1; }
-    .carousel { display:flex; gap:10px; overflow-x:auto; }
-    .carousel .card { min-width:200px; }
-    footer { text-align:center; }
+    body { font-family: Arial, sans-serif; margin:0; padding:0; background:#f9f9f9; }
+    header { background:#007bff; color:#fff; padding:15px; text-align:center; font-size:20px; font-weight:bold; }
+    section { padding:20px; }
+
+    .days { display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap; justify-content:center; }
+
+    .day-btn {
+      padding:10px 18px;
+      border:none;
+      border-radius:6px;
+      color:#fff;
+      cursor:pointer;
+      font-weight:bold;
+      transition:0.2s;
+    }
+    .day-btn:hover { opacity:0.85; }
+    .day-btn.active { box-shadow:0 0 8px rgba(0,0,0,0.3); }
+
+    /* Warna tombol per hari */
+    .senin { background:#007bff; }
+    .selasa { background:#28a745; }
+    .rabu { background:#ff9800; }
+    .kamis { background:#6f42c1; }
+    .jumat { background:#dc3545; }
+
+    .grid { display:flex; flex-direction:column; gap:10px; align-items:center; }
+    .card { 
+      padding:12px 20px; 
+      border:1px solid #ccc; 
+      border-radius:8px; 
+      width:80%; 
+      background:#fff;
+      font-size:16px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+    }
+    .jam { font-weight:bold; color:#007bff; }
   </style>
 </head>
 <body>
-  <!-- Main page langsung tampil -->
-  <div id="mainPage">
-    <header>
-      <span><strong>LOGO</strong></span>
-      <input id="search" type="text" placeholder="Cari materi, kursus...">
-      <span id="notif">🔔 <span id="notifCount">0</span></span>
-      <span id="profile">👤 Pengunjung</span>
-    </header>
+  <header>📅 Jadwal Pelajaran</header>
 
-    <nav>
-      <ul>
-        <li class="active">Beranda</li>
-        <li>Kursus</li>
-        <li>Latihan</li>
-        <li>Forum</li>
-        <li>Lainnya</li>
-      </ul>
-    </nav>
-
-    <section>
-      <h1 id="heroTitle">Belajar Mudah, Dimana Saja</h1>
-      <p id="heroSub">Akses ribuan kursus dan latihan soal gratis</p>
-      <button onclick="alert('Mulai Belajar!')">Mulai Belajar</button>
-      <button onclick="alert('Lihat Kursus!')">Lihat Kursus</button>
-    </section>
-
-    <section>
-      <h2>Kursus Unggulan</h2>
-      <div class="grid">
-        <div class="card">Matematika Dasar</div>
-        <div class="card">Bahasa Inggris</div>
-        <div class="card">Ilmu Pengetahuan Alam</div>
-      </div>
-      <a href="#">Lihat Semua Kursus</a>
-    </section>
-
-    <section>
-      <h2>Progres Belajar</h2>
-      <progress id="progress" value="65" max="100"></progress>
-      <p id="lastCourse">Matematika Dasar - Bab 3</p>
-      <button onclick="lanjutBelajar()">Lanjutkan Belajar</button>
-    </section>
-
-    <section>
-      <h2>Tes Kemampuan</h2>
-      <ul>
-        <li>Kuis Matematika <button onclick="kerjakan('Matematika')">Kerjakan</button></li>
-        <li>Kuis Bahasa Inggris <button onclick="kerjakan('Bahasa Inggris')">Kerjakan</button></li>
-      </ul>
-      <a href="#">Lihat Semua Kuis</a>
-    </section>
-
-    <section>
-      <h2>Forum Diskusi</h2>
-      <ul id="forumList">
-        <li>Cara memahami aljabar</li>
-        <li>Tips belajar grammar</li>
-        <li>Diskusi persiapan ujian</li>
-      </ul>
-      <button onclick="buatTopik()">Buat Topik Baru</button>
-    </section>
-
-    <section>
-      <div>
-        <h3 id="level">🏆 Level 1</h3>
-        <progress id="levelProg" value="0" max="100"></progress>
-      </div>
-      <div>
-        <h3>⭐ EduPoin: <span id="poin">0</span></h3>
-        <button id="btnRedeem">Tukar Hadiah (100 poin)</button>
-      </div>
-    </section>
-
-    <section>
-      <h2>Promo & Informasi</h2>
-      <div class="carousel">
-        <div class="card">Kursus Premium Diskon 50%</div>
-        <div class="card">Webinar Sains Gratis</div>
-        <div class="card">Artikel Belajar Efektif</div>
-      </div>
-    </section>
-
-    <footer>
-      <a href="#">Tentang Kami</a> |
-      <a href="#">Kontak</a> |
-      <a href="#">Kebijakan Privasi</a> |
-      <a href="#">Bantuan</a>
-    </footer>
-  </div>
+  <section>
+    <div class="days">
+      <button class="day-btn senin active" onclick="showSchedule('Senin', event)">Senin</button>
+      <button class="day-btn selasa" onclick="showSchedule('Selasa', event)">Selasa</button>
+      <button class="day-btn rabu" onclick="showSchedule('Rabu', event)">Rabu</button>
+      <button class="day-btn kamis" onclick="showSchedule('Kamis', event)">Kamis</button>
+      <button class="day-btn jumat" onclick="showSchedule('Jumat', event)">Jumat</button>
+    </div>
+    <div id="schedule" class="grid"></div>
+  </section>
 
   <script>
-    const poinEl = document.getElementById('poin');
+    const schedules = {
+      "Senin": ["📘 Matematika", "🎨 Seni Budaya", "🌍 Bahasa Inggris", "🕌 Bahasa Arab", "💻 Informatika"],
+      "Selasa": ["⚽ PJOK", "🏛️ PPKN", "🌍 Bahasa Inggris", "🌙 Ke Muhammadiyahan", "📖 Bahasa Indonesia", "🧑‍🏫 BK"],
+      "Rabu": ["🎓 D2PK"],
+      "Kamis": ["🔬 IPAS", "📜 Sejarah", "📘 Matematika"],
+      "Jumat": ["📖 Bahasa Indonesia", "☪️ Al Islam", "📝 Bahasa Jawa"]
+    };
 
-    async function redeem() {
-      const res = await fetch('/api/redeem', { method: 'POST' });
-      const data = await res.json();
-      if (data.ok) {
-        poinEl.textContent = String(data.points);
-        alert('Tukar berhasil!');
-      } else {
-        alert(data.error || 'Tukar gagal');
-      }
+    function renderSchedule(day) {
+      const container = document.getElementById("schedule");
+      container.innerHTML = "";
+      schedules[day].forEach((mapel, index) => {
+        const div = document.createElement("div");
+        div.className = "card";
+
+        const jam = document.createElement("span");
+        jam.className = "jam";
+        jam.textContent = "Jam " + (index + 1);
+
+        const namaMapel = document.createElement("span");
+        namaMapel.textContent = mapel;
+
+        div.appendChild(jam);
+        div.appendChild(namaMapel);
+        container.appendChild(div);
+      });
     }
 
-    function lanjutBelajar() {
-      alert('Lanjutkan belajar dari progres terakhir!');
+    function showSchedule(day, e) {
+      document.querySelectorAll(".day-btn").forEach(btn => btn.classList.remove("active"));
+      e.target.classList.add("active");
+      renderSchedule(day);
     }
 
-    function kerjakan(mapel) {
-      alert('Mulai mengerjakan kuis ' + mapel);
-    }
-
-    function buatTopik() {
-      alert('Fitur membuat topik baru di forum');
-    }
-
-    document.getElementById('btnRedeem').addEventListener('click', redeem);
+    // Default tampil Senin
+    renderSchedule("Senin");
   </script>
 </body>
-  </html>
-                                                                                            </html>
+</html>
